@@ -12,11 +12,7 @@ class CurrentCityWeatherCell: UITableViewCell {
     @IBOutlet weak var cityNameLabel: UILabel!
     @IBOutlet weak var weatherDescriptionLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
-    
-    @IBOutlet weak var maxTempLabel: UILabel!
-    @IBOutlet weak var minTempLabel: UILabel!
-    
-    @IBOutlet weak var icon: UIImageView!
+
     @IBOutlet weak var backgroundImgView: UIImageView!
     
     var cityWeatherVM: CityWeatherViewModel? {
@@ -25,10 +21,7 @@ class CurrentCityWeatherCell: UITableViewCell {
                 cityNameLabel.text = cityWeatherVM.cityName
                 temperatureLabel.text = cityWeatherVM.temperature
                 weatherDescriptionLabel.text = cityWeatherVM.description
-                minTempLabel.text = cityWeatherVM.minTemperature
-                maxTempLabel.text = cityWeatherVM.maxTemperature
                 backgroundImgView.image = UIImage(named: cityWeatherVM.backgroundImage)
-               // icon.image = UIImage(named: cityWeatherVM.icon)
             }
         }
     }

@@ -8,7 +8,7 @@
 import PSAWeatherSDK
 import UIKit
 
-class ViewController: UIViewController {
+class CitiesWeatherViewController: UIViewController {
     
     var citiesWeatherVM = CitiesWeatherListViewModel(citiesWeatherVM: [CityWeatherViewModel]())
     private var datasource: CitiesTableViewDataSource?
@@ -19,7 +19,6 @@ class ViewController: UIViewController {
         PSAWeatherSDK.shared.configure(with: "216f0a6fde418838d9d47d4cb09238f5")
         PSAWeatherSDK.shared.delegate = self
         PSAWeatherSDK.shared.getSavedCitiesCurrentWeatherList()
-        registerNibsForTableView()
         setAppearence()
     }
     
@@ -32,10 +31,9 @@ class ViewController: UIViewController {
         }
         addCityVC.delegate = self
     }
-    
 }
 
-extension ViewController: PSAWeatherSDKDelegate {
+extension CitiesWeatherViewController: PSAWeatherSDKDelegate {
     func PSAWeatherSDKDidFinishWithSuccess<T>(result: T) {
         if let citiesWeather =  result as? [CurrentCityWeather] {
             self.citiesWeatherVM = CitiesWeatherListViewModel(citiesWeatherVM: citiesWeather.map(CityWeatherViewModel.init))
@@ -52,7 +50,7 @@ extension ViewController: PSAWeatherSDKDelegate {
     }
 }
 
-extension ViewController: CurrentCityWeatherAdd {
+extension CitiesWeatherViewController: CurrentCityWeatherAdd {
     func currentCityWeatherAdded(cityWeatherVM: CityWeatherViewModel) {
         self.citiesWeatherVM.add(cityWeatherVM)
         self.datasource = CitiesTableViewDataSource(citiesWeatherVM)
@@ -61,18 +59,22 @@ extension ViewController: CurrentCityWeatherAdd {
     }
 }
 
-extension ViewController: UITableViewDelegate {
+extension CitiesWeatherViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 120
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cityWeatherVM = self.citiesWeatherVM.modelAt(indexPath.row)
+        let detailsVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "WeatherDetailsViewController") as!  WeatherDetailsViewController
+        detailsVC.navigationController?.navigationBar.prefersLargeTitles = false
+        detailsVC.cityWeatherVM = cityWeatherVM
+        self.navigationController?.pushViewController(detailsVC, animated: true)
     }
 }
 
 
-extension ViewController {
-    func registerNibsForTableView() {
-        tableView.register(UINib.init(nibName: "currentCityWeatherCell", bundle: nil), forCellReuseIdentifier: "currentCityWeatherCell")
-    }
-    
+extension CitiesWeatherViewController {
     func setAppearence() {
         navigationController?.navigationBar.prefersLargeTitles = true
     }
