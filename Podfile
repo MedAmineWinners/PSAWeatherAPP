@@ -5,7 +5,7 @@ install! 'cocoapods',
 target 'PSAWeatherAPP' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-pod 'PSAWeatherSDK', :path => '/Users/medamine/Documents/PSAWeatherSDK'
+pod 'PSAWeatherSDK', '~> 0.1'
   # Pods for PSAWeatherAPP
 
 end
