@@ -8,10 +8,15 @@
 import Foundation
 import UIKit
 
+protocol CitiesTableViewRemoveItemProtocol {
+    func citiesTableViewDidRemove(currentCityWeatherVM: CityWeatherViewModel)
+}
+
 class CitiesTableViewDataSource: NSObject, UITableViewDataSource {
     
     let currentCellIdentifier = "currentWeatherCell"
     private var currentCitiesWeather: CitiesWeatherListViewModel
+    var removeItemProtocol: CitiesTableViewRemoveItemProtocol?
     
     init(_ citiesWeatherListViewModel: CitiesWeatherListViewModel) {
         self.currentCitiesWeather = citiesWeatherListViewModel
@@ -33,5 +38,18 @@ class CitiesTableViewDataSource: NSObject, UITableViewDataSource {
         }
         cell.cityWeatherVM = cityWeatherVM
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if (editingStyle == .delete) {
+            let currentCityWeatherVMToDelete = currentCitiesWeather.modelAt(indexPath.row)
+            currentCitiesWeather.removeAt(indexPath.row)
+            tableView.reloadData()
+            removeItemProtocol?.citiesTableViewDidRemove(currentCityWeatherVM: currentCityWeatherVMToDelete)
+        }
     }
 }

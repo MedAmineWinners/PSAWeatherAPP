@@ -98,4 +98,20 @@ struct DayWeatherViewModel {
     var icon: String {
         return weather?.icon ?? ""
     }
+    
+    var sunrise: String? {
+        return "\(daily.sunrise.hours())h"
+    }
+    
+    var sunset: String? {
+        return "\(daily.sunset.hours())h"
+    }
+    
+    var humidity: String? {
+        return "\(daily.humidity)%"
+    }
+    
+    var pressure: String? {
+        return "\(daily.pressure)hPa"
+    }
 }

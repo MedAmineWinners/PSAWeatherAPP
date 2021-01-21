@@ -25,6 +25,11 @@ class AddCityViewController: UIViewController, UITextFieldDelegate {
         PSAWeatherSDK.shared.addCity(with: textField.text ?? "")
         return true
     }
+    
+    @IBAction func addCitySelected(_ sender: Any) {
+        PSAWeatherSDK.shared.addCity(with: self.addCityTextField.text ?? "")
+    }
+    
 }
 
 extension AddCityViewController: PSAWeatherSDKDelegate {

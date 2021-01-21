@@ -13,6 +13,7 @@ class CitiesWeatherViewController: UIViewController {
     var citiesWeatherVM = CitiesWeatherListViewModel(citiesWeatherVM: [CityWeatherViewModel]())
     private var datasource: CitiesTableViewDataSource?
     @IBOutlet weak var tableView: UITableView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.delegate = self
@@ -31,15 +32,28 @@ class CitiesWeatherViewController: UIViewController {
         }
         addCityVC.delegate = self
     }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        navigationController?.navigationBar.barStyle = .black
+    }
 }
 
 extension CitiesWeatherViewController: PSAWeatherSDKDelegate {
     func PSAWeatherSDKDidFinishWithSuccess<T>(result: T) {
         if let citiesWeather =  result as? [CurrentCityWeather] {
-            self.citiesWeatherVM = CitiesWeatherListViewModel(citiesWeatherVM: citiesWeather.map(CityWeatherViewModel.init))
-            self.datasource = CitiesTableViewDataSource(self.citiesWeatherVM)
-            self.tableView.dataSource = datasource
-            self.tableView.reloadData()
+            if citiesWeather.count > 0 {
+                self.citiesWeatherVM = CitiesWeatherListViewModel(citiesWeatherVM: citiesWeather.map(CityWeatherViewModel.init))
+                self.datasource = CitiesTableViewDataSource(self.citiesWeatherVM)
+                self.datasource?.removeItemProtocol = self
+                self.tableView.dataSource = datasource
+                self.tableView.reloadData()
+            } else {
+                presentAddCityViewController()
+            }
         }
     }
     
@@ -54,22 +68,29 @@ extension CitiesWeatherViewController: CurrentCityWeatherAdd {
     func currentCityWeatherAdded(cityWeatherVM: CityWeatherViewModel) {
         self.citiesWeatherVM.add(cityWeatherVM)
         self.datasource = CitiesTableViewDataSource(citiesWeatherVM)
+        self.datasource?.removeItemProtocol = self
         self.tableView.dataSource = datasource
         self.tableView.reloadData()
     }
 }
 
-extension CitiesWeatherViewController: UITableViewDelegate {
+extension CitiesWeatherViewController: UITableViewDelegate, CitiesTableViewRemoveItemProtocol {
+    
+    func citiesTableViewDidRemove(currentCityWeatherVM: CityWeatherViewModel) {
+        PSAWeatherSDK.shared.removeCurrentCityWeather(currentCityWeather: currentCityWeatherVM.currentWeather)
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 120
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cityWeatherVM = self.citiesWeatherVM.modelAt(indexPath.row)
-        let detailsVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "WeatherDetailsViewController") as!  WeatherDetailsViewController
-        detailsVC.navigationController?.navigationBar.prefersLargeTitles = false
-        detailsVC.cityWeatherVM = cityWeatherVM
-        self.navigationController?.pushViewController(detailsVC, animated: true)
+        if let detailsVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "WeatherDetailsViewController") as?  WeatherDetailsViewController {
+            detailsVC.navigationController?.navigationBar.prefersLargeTitles = false
+            detailsVC.cityWeatherVM = cityWeatherVM
+            self.navigationController?.pushViewController(detailsVC, animated: true)
+        }
     }
 }
 
@@ -77,5 +98,14 @@ extension CitiesWeatherViewController: UITableViewDelegate {
 extension CitiesWeatherViewController {
     func setAppearence() {
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.setNeedsStatusBarAppearanceUpdate()
+    }
+    
+    func presentAddCityViewController() {
+        if let addCityVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AddCityViewController") as? AddCityViewController {
+            addCityVC.delegate = self
+            let nav = UINavigationController(rootViewController: addCityVC)
+            self.navigationController?.present(nav, animated: true)
+        }
     }
 }

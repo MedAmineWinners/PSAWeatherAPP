@@ -28,6 +28,10 @@ class WeatherDetailsViewController: UIViewController {
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var cityLabel: UILabel!
     
+    @IBOutlet weak var humidityLabel: UILabel!
+    @IBOutlet weak var pressureLabel: UILabel!
+    @IBOutlet weak var sunsetLabel: UILabel!
+    @IBOutlet weak var sunriseLabel: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
         PSAWeatherSDK.shared.delegate = self
@@ -45,6 +49,14 @@ class WeatherDetailsViewController: UIViewController {
         temperatureLabel.text = cityWeatherVM?.temperature
     }
     
+    func setCurrentDayDetailsView(dayWeatherVM: DayWeatherViewModel?) {
+        if let dayWeatherVM = dayWeatherVM {
+            humidityLabel.text = dayWeatherVM.humidity
+            pressureLabel.text = dayWeatherVM.pressure
+            sunriseLabel.text = dayWeatherVM.sunrise
+            sunsetLabel.text = dayWeatherVM.sunset
+        }
+    }
 }
 
 extension WeatherDetailsViewController: PSAWeatherSDKDelegate {
@@ -62,6 +74,7 @@ extension WeatherDetailsViewController: PSAWeatherSDKDelegate {
             self.dailyListVM.list = dailyList.map(DayWeatherViewModel.init)
             self.hourlyListVM.list = hourlyList.map(HourWeatherViewModel.init)
             
+            self.setCurrentDayDetailsView(dayWeatherVM: self.dailyListVM.list.first)
             self.tableViewdataSource = DailyTableViewDataSource(dailyListVM)
             self.collectionViewDataSource = HourlyCollectionViewDataSource(hourlyListVM)
             

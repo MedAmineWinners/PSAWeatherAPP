@@ -37,7 +37,7 @@ struct CityWeatherViewModel {
     }
     
     var feelsLike: String? {
-        return "feels like \(currentWeather.main.feelsLike)°"
+        return "feels like \(Int(currentWeather.main.feelsLike))°"
     }
     
     var cityName: String? {

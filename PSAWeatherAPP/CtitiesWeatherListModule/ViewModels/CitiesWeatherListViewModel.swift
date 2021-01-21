@@ -25,4 +25,8 @@ extension CitiesWeatherListViewModel {
     func add(_ cityWeatherVM: CityWeatherViewModel) {
         self.list.append(cityWeatherVM)
     }
+    
+    func removeAt(_ index: Int) {
+        self.list.remove(at: index)
+    }
 }

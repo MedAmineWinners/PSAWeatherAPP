@@ -15,12 +15,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         let largeTitleAppearance = UINavigationBarAppearance()
-        largeTitleAppearance.configureWithOpaqueBackground()
         largeTitleAppearance.backgroundColor = .black
         largeTitleAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
         largeTitleAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         UINavigationController().navigationBar.standardAppearance = largeTitleAppearance
         UINavigationController().navigationBar.scrollEdgeAppearance = largeTitleAppearance
+        UINavigationController().setNeedsStatusBarAppearanceUpdate()
         guard let _ = (scene as? UIWindowScene) else { return }
     }
 
