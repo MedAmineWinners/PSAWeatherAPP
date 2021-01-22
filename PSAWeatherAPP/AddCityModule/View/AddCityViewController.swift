@@ -22,12 +22,20 @@ class AddCityViewController: UIViewController, UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        PSAWeatherSDK.shared.addCity(with: textField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
+        addCity()
         return true
     }
     
     @IBAction func addCitySelected(_ sender: Any) {
-        PSAWeatherSDK.shared.addCity(with: self.addCityTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
+        addCity()
+    }
+    
+    private func addCity() {
+        if self.addCityTextField.isValidTextFieldContent() {
+            PSAWeatherSDK.shared.addCity(with: self.addCityTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
+        } else {
+            self.dismiss(animated: true, completion: nil)
+        }
     }
     
 }

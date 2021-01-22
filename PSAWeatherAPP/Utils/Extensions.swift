@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import UIKit
+
 extension Date {
     func dateToString(with dateFormatter: DateFormatter) -> String {
         dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -32,5 +34,14 @@ extension Date {
             return false
         }
         return true
+    }
+}
+
+extension UITextField {
+    func isValidTextFieldContent() -> Bool {
+        if let textFieldText = self.text?.trimmingCharacters(in: .whitespacesAndNewlines), !textFieldText.isEmpty {
+           return true
+        }
+        return false
     }
 }
